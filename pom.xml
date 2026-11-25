@@ -10,8 +10,8 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <maven.compiler.release>25</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.release>25</maven.compiler.release>
         <langchain4j.version>1.23.0</langchain4j.version>
         <langchain4j.beta.version>1.23.0-beta33</langchain4j.beta.version>
     </properties>
@@ -23,19 +23,28 @@
                 <artifactId>langchain4j</artifactId>
                 <version>${langchain4j.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>dev.langchain4j</groupId>
                 <artifactId>langchain4j-google-genai</artifactId>
                 <version>${langchain4j.beta.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>dev.langchain4j</groupId>
                 <artifactId>langchain4j-document-parser-apache-tika</artifactId>
                 <version>${langchain4j.beta.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>dev.langchain4j</groupId>
                 <artifactId>langchain4j-embeddings-bge-small-en-v15</artifactId>
+                <version>${langchain4j.beta.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>dev.langchain4j</groupId>
+                <artifactId>langchain4j-web-search-engine-tavily</artifactId>
                 <version>${langchain4j.beta.version}</version>
             </dependency>
         </dependencies>
@@ -63,6 +72,11 @@
         </dependency>
 
         <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-web-search-engine-tavily</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>2.0.17</version>
@@ -78,4 +92,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>
