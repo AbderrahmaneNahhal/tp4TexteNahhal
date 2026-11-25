@@ -1,0 +1,2 @@
+Je n'ai pas utilisé l'IA.
+
