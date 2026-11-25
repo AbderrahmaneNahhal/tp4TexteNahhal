@@ -15,14 +15,16 @@ import dev.langchain4j.rag.DefaultRetrievalAugmentor;
 import dev.langchain4j.rag.content.retriever.ContentRetriever;
 import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
 import dev.langchain4j.rag.content.retriever.WebSearchContentRetriever;
-import dev.langchain4j.rag.query.router.DefaultQueryRouter;
+import dev.langchain4j.rag.query.router.LanguageModelQueryRouter;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
 import dev.langchain4j.web.search.WebSearchEngine;
 import dev.langchain4j.web.search.tavily.TavilyWebSearchEngine;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class TestRechercheWeb {
@@ -61,9 +63,36 @@ public class TestRechercheWeb {
                 .maxResults(3)
                 .build();
 
-        // Première version : chaque question est envoyée aux deux sources.
-        DefaultQueryRouter router =
-                new DefaultQueryRouter(retrieverPDF, retrieverWeb);
+        /*
+         * Ancienne version : recherche systématique dans les deux sources.
+         *
+         * DefaultQueryRouter router =
+         *         new DefaultQueryRouter(retrieverPDF, retrieverWeb);
+         *
+         * Problème observé : des passages du cours sur le RAG étaient ajoutés
+         * à une question sur le football, avec une confusion des sources
+         * dans la réponse finale.
+         */
+
+        Map<ContentRetriever, String> sources = new LinkedHashMap<>();
+
+        sources.put(retrieverPDF, """
+                Support de cours sur le RAG, le fine-tuning et les modèles
+                de langage. À utiliser pour les questions théoriques
+                concernant ces thèmes ou le contenu du support.
+                Ne contient aucune information sur le football ou l'actualité.
+                """);
+
+        sources.put(retrieverWeb, """
+                Recherche sur le Web pour les actualités, les résultats
+                sportifs, les événements récents et les informations
+                absentes du support de cours.
+                À utiliser pour les informations nécessitant une mise à jour,
+                même si elles concernent l'intelligence artificielle.
+                """);
+
+        LanguageModelQueryRouter router =
+                new LanguageModelQueryRouter(model, sources);
 
         DefaultRetrievalAugmentor augmentor =
                 DefaultRetrievalAugmentor.builder()
@@ -76,7 +105,7 @@ public class TestRechercheWeb {
                 .retrievalAugmentor(augmentor)
                 .build();
 
-        System.out.println("Indexation terminée : PDF + recherche Web.");
+        System.out.println("Indexation terminée : routage sélectif PDF / Web.");
         conversationAvec(assistant);
     }
 
